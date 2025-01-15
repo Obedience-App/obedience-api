@@ -93,11 +93,37 @@ where `type` is either `habit`, `reward`, `punishment` or `relationship`, and `O
   "id": string,
   "owner": string,
   "partner": string,
-  "reward": string,
-  "history": string,
-  "notes": Object
+  "reward": int,
+  "history": [HistoryEntry],
+  "notes": {
+    "rules": NoteData,
+    "limits": NoteData,
+    "ideas": NoteData,
+    "notes": NoteData,
+  }
 }
 ```
+
+where `HistoryEntry` has the following format:
+```
+{
+  "manual": boolean,
+  "reason": string,
+  "date": {
+    "_seconds": int,
+    "_nanoseconds": int
+  },
+  "amount": int
+}
+```
+and `NoteData` has the following format:
+```
+{
+  "plain_text": string,
+  "rich_text": string
+}
+```
+where `rich_text` is a Quill Delta object serialized as a string.
 
 `id` is the ID of the object that changed, `owner` is the ID of the submissive who owns the habit and `partner` is the ID of the dominant partner (if applicable).
 
