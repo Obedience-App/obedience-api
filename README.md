@@ -31,11 +31,12 @@ and a JSON body with the following format:
   'url': string,
   'habits': boolean,
   'rewards': boolean,
-  'punishments': boolean
+  'punishments': boolean,
+  'relationships': boolean
 }
 ```
 
-where `url` is your webhook endpoint, and `habits`, `rewards` and `punishments` indicate whether you want to receive webhook events for changes to the user's habits, rewards and punishments respectively.
+where `url` is your webhook endpoint, and `habits`, `rewards`, `punishments` and `relationships` indicate whether you want to receive webhook events for changes to the user's habits, rewards, punishments and relationships respectively.
 
 Once you've enabled the webhook, and a relevant change is made, your webhook endpoint will receive a POST request with the following JSON body:
 ```
@@ -47,7 +48,9 @@ Once you've enabled the webhook, and a relevant change is made, your webhook end
   "after": ObjectData
 }
 ```
-where `type` is either `habit`, `reward` or `punishment`, and `ObjectData` has the following format:
+where `type` is either `habit`, `reward`, `punishment` or `relationship`, and `ObjectData` has a format depending on the type of object that changed, as follows.
+
+### Habits
 ```
 {
   "id": string,
@@ -56,9 +59,72 @@ where `type` is either `habit`, `reward` or `punishment`, and `ObjectData` has t
   "name": string,
   "description": string,
   "amount": int,
-  "cost": int (only for rewards!)
 }
 ```
+
+### Rewards
+```
+{
+  "id": string,
+  "owner": string,
+  "partner": string,
+  "name": string,
+  "description": string,
+  "amount": int,
+  "cost": int
+}
+```
+
+### Punishments
+```
+{
+  "id": string,
+  "owner": string,
+  "partner": string,
+  "name": string,
+  "description": string,
+  "amount": int
+}
+```
+
+### Relationships
+```
+{
+  "id": string,
+  "owner": string,
+  "partner": string,
+  "reward": int,
+  "history": [HistoryEntry],
+  "notes": {
+    "rules": NoteData,
+    "limits": NoteData,
+    "ideas": NoteData,
+    "notes": NoteData,
+  }
+}
+```
+
+where `HistoryEntry` has the following format:
+```
+{
+  "manual": boolean,
+  "reason": string,
+  "date": {
+    "_seconds": int,
+    "_nanoseconds": int
+  },
+  "amount": int
+}
+```
+and `NoteData` has the following format:
+```
+{
+  "plain_text": string,
+  "rich_text": string
+}
+```
+where `rich_text` is a Quill Delta object serialized as a string.
+
 `id` is the ID of the object that changed, `owner` is the ID of the submissive who owns the habit and `partner` is the ID of the dominant partner (if applicable).
 
 Note that for each webhook event emitted, there is a timeout of 10 seconds. Your webhook endpoint must therefore process the incoming POST request within 10 seconds. If you need more time, consider using a background job after the webhook event is received.
@@ -69,6 +135,7 @@ In addition to webhooks (set up via `https://app.obedienceapp.com/extensions/web
 - `https://app.obedienceapp.com/extensions/habits`
 - `https://app.obedienceapp.com/extensions/rewards`
 - `https://app.obedienceapp.com/extensions/punishments`
+- `https://app.obedienceapp.com/extensions/relationships`
 
 In your GET request, you need to provide the following URL parameters:
 - `extensionId`(string): your extension ID
