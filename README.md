@@ -129,6 +129,8 @@ where `rich_text` is a Quill Delta object serialized as a string.
 
 Note that for each webhook event emitted, there is a timeout of 10 seconds. Your webhook endpoint must therefore process the incoming POST request within 10 seconds. If you need more time, consider using a background job after the webhook event is received.
 
+For additional security, the webhook request includes an `X-Signature` header, which is an `RSA-SHA256` hash of the request body that you can verify using [public.pem](public.pem) as the public key. You can use this to verify that the webhook request indeed comes from Obedience.
+
 
 ## Requesting Obedience data
 In addition to webhooks (set up via `https://app.obedienceapp.com/extensions/webhook`), you can also actively request Obedience data using a GET request on the following endpoints:
