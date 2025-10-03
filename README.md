@@ -147,3 +147,22 @@ In your GET request, you need to provide the following URL parameters:
 If `id` is provided, you will receive a JSON response with the `ObjectData` format (see Webhooks) representing the object you've requested. If the object with the given ID does not exist, you'll receive a 404 response.
 
 If `id` is not provided, you will receive a JSON response with a list of `ObjectData` representing all the objects the user has access to.
+
+## Incrementing/decrementing habits
+You can increment or decrement a habit's amount by making a `POST` request to `https://app.obedienceapp.com/extensions/habits` with the following URL parameters:
+- `extensionId`(string): your extension ID
+- `secret`(string): your extension secret
+- `id`(string): the ID of the habit you want to increment/decrement
+
+and a JSON body with the following format:
+```
+{
+  "action": string,
+  "amount": int
+}
+```
+where `amount` is a non-zero integer indicating by how much you want to change the habit's amount, and `action` is `increment`.
+
+Incrementing and decrementing a habit will automatically update the habit history and stats, as well as any associated rewards, punishments and reward points.
+
+This action is only allowed if the habit does not require photo proof, and the user has permission to change this habit's amount.
