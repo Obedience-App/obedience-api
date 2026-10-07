@@ -164,6 +164,8 @@ If `id` is provided, you will receive a JSON response with the `ObjectData` form
 
 If `id` is not provided, you will receive a JSON response with a list of `ObjectData` representing all the objects the user has access to.
 
+Habits fetched this way also include `allowExceedingGoal` (boolean), which indicates whether the habit's amount can go past its `goal`. It is only `false` for "at least" habits with a goal above 0 whose "Allow completing more than N times" setting is turned off.
+
 ## Incrementing/decrementing habits
 You can increment or decrement a habit's amount by making a `POST` request to `https://app.obedienceapp.com/extensions/habits` with the following URL parameters:
 - `extensionId`(string): your extension ID
@@ -180,5 +182,7 @@ and a JSON body with the following format:
 where `amount` is a non-zero integer indicating by how much you want to change the habit's amount, and `action` is `increment`.
 
 Incrementing and decrementing a habit will automatically update the habit history and stats, as well as any associated rewards, punishments and reward points.
+
+If the habit's `allowExceedingGoal` is `false`, an increment that would take its amount past `goal` is rejected with a 400 response (`Cannot increment above goal`), and the amount is left unchanged.
 
 This action is only allowed if the habit does not require photo proof, and the user has permission to change this habit's amount.
